@@ -1,0 +1,13 @@
+{
+  "itemGroup.ikust": "Example Mod Tab",
+  "block.ikust.example_block": "Example Block",
+  "item.ikust.example_item": "Example Item",
+
+  "ikust.configuration.title": "IkuServerTools Configs",
+  "ikust.configuration.section.ikust.common.toml": "IkuServerTools Configs",
+  "ikust.configuration.section.ikust.common.toml.title": "IkuServerTools Configs",
+  "ikust.configuration.items": "Item List",
+  "ikust.configuration.logDirtBlock": "Log Dirt Block",
+  "ikust.configuration.magicNumberIntroduction": "Magic Number Text",
+  "ikust.configuration.magicNumber": "Magic Number"
+}
