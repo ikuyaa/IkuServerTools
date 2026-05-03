@@ -179,6 +179,18 @@ public class CommandHelpers {
 
 
     /**
+     * Validates that coordinates are within safe Minecraft bounds.
+     * Y must be between -64 and 320 (Minecraft world height).
+     * X and Z can technically be anything, but extreme values might cause issues.
+     * @param y the Y coordinate to validate
+     * @return true if coordinates are valid
+     */
+    public static boolean isValidTeleportCoordinate(double y) {
+        // Y must be within Minecraft world bounds (-64 to 320)
+        return y >= -64 && y <= 320;
+    }
+
+    /**
      * Converts milliseconds to a Date object representing when the cooldown will expire.
      * @param cooldownMs the cooldown duration in milliseconds
      * @return a Date object set to the expiry time

@@ -37,10 +37,10 @@ public class TPAData {
 
     public static void clearExpiredTPARequests() {
         long now = System.currentTimeMillis();
-        long expireTime = Config.TPA_REQUEST_EXPIRE_TIME.get() * 1000L;
-        if(expireTime > 0) {
+        long expireTimeMs = Config.TPA_REQUEST_EXPIRE_TIME.get() * 1000L;
+        if(expireTimeMs > 0) {
             pendingTPARequests.forEach((target, requests) -> {
-                requests.entrySet().removeIf(entry -> now - entry.getValue().getTime() > Config.TPA_REQUEST_EXPIRE_TIME.get() * 1000L);
+                requests.entrySet().removeIf(entry -> now - entry.getValue().getTime() > expireTimeMs);
                 if(requests.isEmpty()) {
                     pendingTPARequests.remove(target);
                 }

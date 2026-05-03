@@ -1,11 +1,13 @@
 package com.ikuyadev.ikuservertools.events;
 
+import com.ikuyadev.ikuservertools.Config;
 import com.ikuyadev.ikuservertools.commands.BackCommand;
 import com.ikuyadev.ikuservertools.commands.HomeCommand;
 import com.ikuyadev.ikuservertools.commands.SpawnCommand;
 import com.ikuyadev.ikuservertools.commands.TPAcceptCommand;
 import com.ikuyadev.ikuservertools.commands.WarpCommand;
 import com.ikuyadev.ikuservertools.data.PlayerCombatData;
+import com.ikuyadev.ikuservertools.data.TPAData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
@@ -26,10 +28,7 @@ public class ServerTickEvents {
         // Clean up expired /tpa requests once per second.
         if (++tpaCleanupCounter >= 20) {
             tpaCleanupCounter = 0;
-            int expirationSeconds = 10; // Config.TPA_REQUEST_EXPIRATION.get();
-            if (expirationSeconds > 0) {
-                // TPAData.clearExpiredRequests(expirationSeconds * 1000L);
-            }
+            TPAData.clearExpiredTPARequests();
         }
 
         // Prune state combat entries every 10 seconds to keep the map bounded.

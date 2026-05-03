@@ -7,6 +7,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,6 +65,8 @@ public class WarmupManager<T> {
         }
 
         long now = System.currentTimeMillis();
+        List<UUID> toRemove = new ArrayList<>();
+
         for(Map.Entry<UUID, T> entry : pending.entrySet()) {
             UUID playerId = entry.getKey();
             ServerPlayer player = server.getPlayerList().getPlayer(playerId);
@@ -70,13 +74,14 @@ public class WarmupManager<T> {
 
             // Player offline
             if (player == null || player.isRemoved()) {
-                pending.remove(playerId, data);
+                toRemove.add(playerId);
                 continue;
             }
 
             // Movement check
             if(PlayerHelpers.didPlayerMove(player, getStartPos.apply(data))) {
                 cancel(player, "You moved!");
+                toRemove.add(playerId);
                 continue;
             }
 
@@ -92,9 +97,12 @@ public class WarmupManager<T> {
 
             // Warmup complete
             if(msLeft <= 0) {
-                pending.remove(playerId, data);
+                toRemove.add(playerId);
                 onComplete.accept(player, data);
             }
         }
+
+        // Remove all completed/cancelled warmups
+        toRemove.forEach(pending::remove);
     }
 }

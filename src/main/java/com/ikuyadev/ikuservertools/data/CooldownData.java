@@ -133,13 +133,16 @@ public class CooldownData extends SavedData {
 
     public void clearExpiredCooldowns() {
         long now = System.currentTimeMillis();
-        AtomicBoolean changed = new AtomicBoolean(false);
-        cooldownData.forEach((source, playerCooldowns) -> {
-          if(playerCooldowns.entrySet().removeIf(entry -> entry.getValue().getTime() <= now)) {
-              changed.set(true);
-          }
-        });
-        if(changed.get()) {
+        boolean changed = false;
+        // Create a snapshot of sources to avoid concurrent modification issues
+        for (CooldownSource source : CooldownSource.values()) {
+            Map<UUID, Date> playerCooldowns = cooldownData.get(source);
+            if (playerCooldowns != null && 
+                playerCooldowns.entrySet().removeIf(entry -> entry.getValue().getTime() <= now)) {
+                changed = true;
+            }
+        }
+        if (changed) {
             setDirty();
         }
     }

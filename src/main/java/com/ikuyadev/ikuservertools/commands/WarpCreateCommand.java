@@ -53,6 +53,13 @@ public class WarpCreateCommand {
 		ServerPlayer player = CommandHelpers.requirePlayer(source);
 		if (player == null) return 0;
 
+		// Validate coordinates
+		if (!CommandHelpers.isValidTeleportCoordinate(player.getY())) {
+			CommandHelpers.failure(source, "Cannot set warp: You are at an invalid Y coordinate. " +
+					"Valid range is -64 to 320.");
+			return 0;
+		}
+
 		WarpData warpData = WarpData.get();
 		Optional<WarpData.WarpLocation> existingWarp = warpData.getWarp(warpName);
 		boolean warpExists = existingWarp.isPresent();

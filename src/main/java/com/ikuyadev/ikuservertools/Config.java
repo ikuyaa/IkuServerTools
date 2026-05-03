@@ -54,7 +54,7 @@ public class Config {
     }
 
     // =========================================================
-    //  Homes
+    //  Spawn
     // =========================================================
     static {
         BUILDER.comment("Spawn Settings").push("spawn");

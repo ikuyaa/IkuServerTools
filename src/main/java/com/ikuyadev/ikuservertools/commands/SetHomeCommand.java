@@ -33,6 +33,13 @@ public class SetHomeCommand {
         ServerPlayer player = CommandHelpers.requirePlayer(source);
         if (player == null) return 0;
 
+        // Validate coordinates
+        if (!CommandHelpers.isValidTeleportCoordinate(player.getY())) {
+            CommandHelpers.failure(source, "Cannot set home: You are at an invalid Y coordinate. " +
+                    "Valid range is -64 to 320.");
+            return 0;
+        }
+
         // Getting the player's max homes based on permissions
         int maxHomes = PermissionsManager.resolveHomeLimit(player);
         int currentHomeCount = HomeData.get().getHomeCount(player.getUUID());

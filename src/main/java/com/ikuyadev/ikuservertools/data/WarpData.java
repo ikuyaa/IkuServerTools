@@ -191,29 +191,33 @@ public class WarpData extends SavedData {
     }
 
     public boolean addAllowedPlayer(String name, UUID playerUuid) {
-        WarpLocation warp = warps.get(normalizeWarpName(name));
-        if (warp == null || warp.type() != WarpType.PRIVATE || warp.allowedPlayers().contains(playerUuid)) {
-            return false;
-        }
+        synchronized (warps) {
+            WarpLocation warp = warps.get(normalizeWarpName(name));
+            if (warp == null || warp.type() != WarpType.PRIVATE || warp.allowedPlayers().contains(playerUuid)) {
+                return false;
+            }
 
-        Set<UUID> updatedAllowed = new HashSet<>(warp.allowedPlayers());
-        updatedAllowed.add(playerUuid);
-        warps.put(normalizeWarpName(name), copyWithAllowedPlayers(warp, updatedAllowed));
-        setDirty();
-        return true;
+            Set<UUID> updatedAllowed = new HashSet<>(warp.allowedPlayers());
+            updatedAllowed.add(playerUuid);
+            warps.put(normalizeWarpName(name), copyWithAllowedPlayers(warp, updatedAllowed));
+            setDirty();
+            return true;
+        }
     }
 
     public boolean removeAllowedPlayer(String name, UUID playerUuid) {
-        WarpLocation warp = warps.get(normalizeWarpName(name));
-        if (warp == null || !warp.allowedPlayers().contains(playerUuid)) {
-            return false;
-        }
+        synchronized (warps) {
+            WarpLocation warp = warps.get(normalizeWarpName(name));
+            if (warp == null || !warp.allowedPlayers().contains(playerUuid)) {
+                return false;
+            }
 
-        Set<UUID> updatedAllowed = new HashSet<>(warp.allowedPlayers());
-        updatedAllowed.remove(playerUuid);
-        warps.put(normalizeWarpName(name), copyWithAllowedPlayers(warp, updatedAllowed));
-        setDirty();
-        return true;
+            Set<UUID> updatedAllowed = new HashSet<>(warp.allowedPlayers());
+            updatedAllowed.remove(playerUuid);
+            warps.put(normalizeWarpName(name), copyWithAllowedPlayers(warp, updatedAllowed));
+            setDirty();
+            return true;
+        }
     }
 
     private static WarpType parseWarpType(String value) {

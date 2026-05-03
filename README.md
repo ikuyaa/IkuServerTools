@@ -1,6 +1,6 @@
 # IkuServerTools
 This is my first Minecraft mod :D
-** This project is a WIP, but what is documented in the readme should work fine**
+**This project is a WIP, but what is documented in the readme should work fine**
 Currently only for `NeoForge 1.21.1`. I may port to more versions in the future.
 
 ## <u>Important Notes</u>:
@@ -23,6 +23,11 @@ Currently only for `NeoForge 1.21.1`. I may port to more versions in the future.
 - `/fly {player}`
 - `/god {player}`
 - `/gm {gamemode} {player}`
+- `/warp {name}`
+- `/setwarp {name} {public|private}`
+- `/warp allow {warp} {user}` - `Allow a user to your private warp`
+- `/delwarp {name}`
+- `/listwarps`
 
 ## <u>Permissions</u>:
 - `ikust.home` - `Access to all base home commands (Default: everyone)`
@@ -47,6 +52,11 @@ Currently only for `NeoForge 1.21.1`. I may port to more versions in the future.
 - `ikust.gm` - `Allows the user to use /gm on self (Default: OP)`
 - `ikust.gm.others` - `Allows the user to use /gm {mode} {player} (Default: OP)`
 - `ikust.bypass.combatblock` - `Bypasses combat block for commands (Default: OP)`
+- `ikust.warp` - `Allows the use of /warp and /listwarps (Default: Everyone)` 
+- `warp.create` - `Allows the use of /setwarp (Default: OP)`
+- `warp.count.{number}` - `Set the amount of warps a player can set. 1-100`
+- `warp.unlimited` - `Set unlimited number of homes (Max 100) (Default: OP)`
+
 
 
 ## <u>Base Config</u>:
@@ -124,6 +134,33 @@ Currently only for `NeoForge 1.21.1`. I may port to more versions in the future.
     # Default: 60
     # Range: 10 ~ 3600
     tpaRequestExpireTime = 60
+
+#Warp Settings
+[warps]
+    #
+    #Default maximum number of warps a player can create without a permission override.
+    # Default: 5
+    # Range: 1 ~ 100
+    maxWarps = 5
+    #
+    #Maximum warps for operators / players with ikust.warp.unlimited.
+    # Default: 50
+    # Range: 1 ~ 100
+    maxWarpsOp = 50
+    #
+    #Warmup delay before teleporting to a warp in seconds. 0 = instant.
+    # Default: 3
+    # Range: 0 ~ 30
+    warpWarmup = 3
+    #
+    #Cooldown between teleporting to a warp in seconds. 0 = no cooldown.
+    # Default: 10
+    # Range: 0 ~ 3600
+    warpTeleportCooldown = 10
+    #
+    #Allow teleporting to warps in different dimensions.
+    warpAllowCrossDimension = true
+
 
 ```
 

@@ -35,7 +35,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(IkuServerTools.MODID)
 public class IkuServerTools {
-
     // Define mod id in a common place for everything to reference
     public static final String MODID = "ikust";
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -51,5 +50,4 @@ public class IkuServerTools {
 
         LOGGER.info("IkuServerTools: Mod successfully initialized!");
     }
-
 }
