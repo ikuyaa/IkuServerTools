@@ -57,7 +57,6 @@ public class WarpCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("warp")
-                        .requires(CommandSourceStack::isPlayer)
                         .executes(ctx -> {
                             CommandHelpers.failure(ctx.getSource(), "Usage: /warp <name>");
                             return 0;

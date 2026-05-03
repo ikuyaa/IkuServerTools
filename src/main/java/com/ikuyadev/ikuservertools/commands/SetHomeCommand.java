@@ -5,6 +5,7 @@ import com.ikuyadev.ikuservertools.helpers.CommandHelpers;
 import com.ikuyadev.ikuservertools.managers.PermissionsManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -33,6 +34,9 @@ public class SetHomeCommand {
         ServerPlayer player = CommandHelpers.requirePlayer(source);
         if (player == null) return 0;
 
+        // Normalize home name to lowercase for consistency
+        String normalizedName = homeName.toLowerCase();
+
         // Validate coordinates
         if (!CommandHelpers.isValidTeleportCoordinate(player.getY())) {
             CommandHelpers.failure(source, "Cannot set home: You are at an invalid Y coordinate. " +
@@ -43,10 +47,10 @@ public class SetHomeCommand {
         // Getting the player's max homes based on permissions
         int maxHomes = PermissionsManager.resolveHomeLimit(player);
         int currentHomeCount = HomeData.get().getHomeCount(player.getUUID());
-        boolean homeExists = HomeData.get().getHome(player.getUUID(), homeName).isPresent();
+        boolean homeExists = HomeData.get().homeExists(player.getUUID(), normalizedName);
 
         if(!homeExists && currentHomeCount >= maxHomes) {
-            //TODO: Make the maxHomes gold and underlined
+            // TODO: Make the maxHomes gold and underlined
             CommandHelpers.failure(source,
                     "You have reached your home limit (" + maxHomes + ")." +
                             " Delete a home first with /delhome.");
@@ -63,9 +67,9 @@ public class SetHomeCommand {
                 player.getXRot(),
                 dimension
         );
-        HomeData.get().setHome(player.getUUID(), homeName, loc);
+        HomeData.get().setHome(player.getUUID(), normalizedName, loc);
         CommandHelpers.success(source, () -> Component.literal("Home ")
-                .append(Component.literal(homeName).withStyle(ChatFormatting.GOLD, ChatFormatting.UNDERLINE))
+                .append(Component.literal(normalizedName).withStyle(ChatFormatting.GOLD, ChatFormatting.UNDERLINE))
                 .append(homeExists ? " updated!" : " set!").withStyle(ChatFormatting.GREEN)
         );
 

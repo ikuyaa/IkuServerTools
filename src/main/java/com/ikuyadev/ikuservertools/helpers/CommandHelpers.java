@@ -207,4 +207,20 @@ public class CommandHelpers {
     public static Date secondsToExpiry(long cooldownSeconds) {
         return millisToExpiry(cooldownSeconds * 1000L);
     }
+
+    /**
+     * Safely parses a dimension ID string with error handling.
+     * @param dimensionId the dimension identifier string (e.g., "minecraft:overworld")
+     * @return ResourceLocation if valid, null if parse fails
+     */
+    public static net.minecraft.resources.ResourceLocation parseDimensionString(String dimensionId) {
+        if (dimensionId == null || dimensionId.isBlank()) {
+            return null;
+        }
+        try {
+            return net.minecraft.resources.ResourceLocation.parse(dimensionId);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

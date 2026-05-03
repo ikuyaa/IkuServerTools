@@ -12,6 +12,7 @@ public class EventManager {
         NeoForge.EVENT_BUS.register(new ServerLifecycleEvents());
         NeoForge.EVENT_BUS.register(new PermissionEvents());
         NeoForge.EVENT_BUS.register(new CombatEvents());
+        NeoForge.EVENT_BUS.register(new DeathEvents());
         NeoForge.EVENT_BUS.register(new TeleportEvents());
         NeoForge.EVENT_BUS.register(ServerTickEvents.class);
 

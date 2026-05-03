@@ -70,11 +70,18 @@ public class WarmupManager<T> {
         for(Map.Entry<UUID, T> entry : pending.entrySet()) {
             UUID playerId = entry.getKey();
             ServerPlayer player = server.getPlayerList().getPlayer(playerId);
-            T data = entry.getValue();
-
-            // Player offline
             if (player == null || player.isRemoved()) {
                 toRemove.add(playerId);
+                continue;
+            }
+
+            T data = entry.getValue();
+            long msLeft = getEndTime.apply(data) - now;
+
+            // Warmup complete
+            if(msLeft <= 0) {
+                toRemove.add(playerId);
+                onComplete.accept(player, data);
                 continue;
             }
 
@@ -85,20 +92,13 @@ public class WarmupManager<T> {
                 continue;
             }
 
-            long msLeft = getEndTime.apply(data) - now;
+            // Announce each second (only if secsLeft changed)
             int secsLeft = (int) Math.ceil(msLeft / 1000.0);
-
-            // Announce each second.
-            if(secsLeft != getLastAnnounced.apply(data) && secsLeft > 0) {
+            int lastAnnounced = getLastAnnounced.apply(data);
+            if(secsLeft != lastAnnounced && secsLeft > 0) {
                 T updated = withLastAnnounced.apply(data, secsLeft);
                 pending.put(playerId, updated);
                 onCountdown.accept(player, updated);
-            }
-
-            // Warmup complete
-            if(msLeft <= 0) {
-                toRemove.add(playerId);
-                onComplete.accept(player, data);
             }
         }
 

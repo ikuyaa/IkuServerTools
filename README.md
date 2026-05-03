@@ -26,6 +26,7 @@ Currently only for `NeoForge 1.21.1`. I may port to more versions in the future.
 - `/warp {name}`
 - `/setwarp {name} {public|private}`
 - `/warp allow {warp} {user}` - `Allow a user to your private warp`
+- `/warp deny {warp} {user}` - `Allow a user to your private warp`
 - `/delwarp {name}`
 - `/listwarps`
 

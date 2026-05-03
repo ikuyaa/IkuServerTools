@@ -34,13 +34,9 @@ public final class WarpSuggestionHelper {
     public static final SuggestionProvider<CommandSourceStack> SUGGEST_MANAGEABLE_PRIVATE_WARPS = (ctx, builder) -> {
         try {
             ServerPlayer player = ctx.getSource().getEntity() instanceof ServerPlayer sp ? sp : null;
-            if (player == null) {
-                return builder.buildFuture();
-            }
-
             Map<String, WarpData.WarpLocation> warps = WarpData.get().getWarps();
             java.util.List<String> visibleWarps = warps.entrySet().stream()
-                    .filter(entry -> canManagePrivateWarpSafely(player, entry.getValue()))
+                    .filter(entry -> canSuggestManageablePrivateWarp(ctx.getSource(), player, entry.getValue()))
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
 
@@ -73,5 +69,21 @@ public final class WarpSuggestionHelper {
         } catch (RuntimeException ignored) {
             return false;
         }
+    }
+
+    private static boolean canSuggestManageablePrivateWarp(
+            CommandSourceStack source,
+            ServerPlayer player,
+            WarpData.WarpLocation location
+    ) {
+        if (location == null || location.type() != WarpData.WarpType.PRIVATE) {
+            return false;
+        }
+
+        if (player == null) {
+            return source.hasPermission(2);
+        }
+
+        return canManagePrivateWarpSafely(player, location);
     }
 }

@@ -99,6 +99,11 @@ public class Config {
             .comment("\nTime before a /tpa request expires in seconds.")
             .defineInRange("tpaRequestExpireTime", 60, 10, 3600);
 
+    // Movement threshold used to cancel warmups when a player moves (blocks)
+    public static final ModConfigSpec.DoubleValue MOVE_THRESHOLD = BUILDER
+            .comment("\nMovement threshold in blocks to cancel warmups. Default 0.15")
+            .defineInRange("moveThreshold", 0.15, 0.0, 16.0);
+
     static {
         BUILDER.pop();
     }

@@ -1,6 +1,7 @@
 package com.ikuyadev.ikuservertools.commands;
 
 import com.ikuyadev.ikuservertools.helpers.CommandHelpers;
+import com.ikuyadev.ikuservertools.helpers.AuditLogger;
 import com.ikuyadev.ikuservertools.managers.PermissionsManager;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
@@ -82,6 +83,9 @@ public class FlyCommand {
 
         // Save the fly state to player's persistent data
         target.getPersistentData().putBoolean(FLY_KEY, newState);
+
+        // Audit log
+        AuditLogger.logStateChange(target, "fly", newState);
 
         String message = newState ? "Flying enabled!" : "Flying disabled.";
         ChatFormatting chatColor = newState ? ChatFormatting.GREEN : ChatFormatting.RED;

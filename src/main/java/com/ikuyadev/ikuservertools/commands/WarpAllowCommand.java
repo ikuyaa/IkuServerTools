@@ -58,8 +58,7 @@ public class WarpAllowCommand {
     }
 
     private static int execute(CommandSourceStack source, String warpName, UUID targetUuid, String targetName) {
-        ServerPlayer player = CommandHelpers.requirePlayer(source);
-        if (player == null) return 0;
+        ServerPlayer player = source.getPlayer();
 
         Optional<WarpData.WarpLocation> warpOpt = WarpData.get().getWarp(warpName);
         if (warpOpt.isEmpty()) {
@@ -77,7 +76,10 @@ public class WarpAllowCommand {
             return 0;
         }
 
-        if (!PermissionsManager.canManagePrivateWarp(player, warp)) {
+        boolean canManage = player != null
+            ? PermissionsManager.canManagePrivateWarp(player, warp)
+            : source.hasPermission(2);
+        if (!canManage) {
             CommandHelpers.failure(source, "Only the warp owner or an operator can modify this warp.");
             return 0;
         }
@@ -93,8 +95,8 @@ public class WarpAllowCommand {
             return 0;
         }
 
-        if (player.getServer() != null) {
-            player.getServer().overworld().getDataStorage().save();
+        if (source.getServer() != null) {
+            source.getServer().overworld().getDataStorage().save();
         }
 
         CommandHelpers.success(source, () -> Component.literal("Granted access to ")

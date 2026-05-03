@@ -1,5 +1,10 @@
 package com.ikuyadev.ikuservertools.commands;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
+
 import com.ikuyadev.ikuservertools.Config;
 import com.ikuyadev.ikuservertools.data.TPAData;
 import com.ikuyadev.ikuservertools.data.WarmupData;
@@ -9,6 +14,7 @@ import com.ikuyadev.ikuservertools.managers.PermissionsManager;
 import com.ikuyadev.ikuservertools.managers.WarmupManager;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -21,11 +27,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
-
 public class TPAcceptCommand {
 
     private record WarmupPayload(
@@ -33,8 +34,7 @@ public class TPAcceptCommand {
             ServerLevel targetLevel,
             Vec3 targetPosition,
             float targetYaw,
-            float targetPitch,
-            PlayerHelpers.BackLocation requesterBackLocation
+            float targetPitch
     ) {}
 
     private static final WarmupManager<WarmupData<WarmupPayload>> WARMUP_MANAGER =
@@ -44,9 +44,9 @@ public class TPAcceptCommand {
                     WarmupData::lastAnnouncedSecond,
                     WarmupData::withLastAnnouncedSecond,
                     (player, data) -> {
-                        // Keep /back anchored to where the requester was when /tpaccept started.
-                        PlayerHelpers.saveBackLocation(player, data.payload().requesterBackLocation());
-                        teleportToTarget(player, data.payload(), false);
+                        // Save player's current position before teleporting
+                        PlayerHelpers.saveBackLocation(player);
+                        teleportToTarget(player, data.payload());
                     },
                     (player, data) -> {
                         player.sendSystemMessage(warmupMessage(data.payload().targetPlayerName(), data.lastAnnouncedSecond()));
@@ -98,7 +98,7 @@ public class TPAcceptCommand {
         if (warmupSeconds > 0) {
             startWarmup(requester, target, warmupSeconds);
         } else {
-            teleportToTarget(requester, buildPayload(requester, target), true);
+            teleportToTarget(requester, buildPayload(requester, target));
         }
 
         CommandHelpers.success(source, () -> Component.literal("Accepted teleport request from ")
@@ -173,19 +173,11 @@ public class TPAcceptCommand {
                 target.serverLevel(),
                 target.position(),
                 target.getYRot(),
-                target.getXRot(),
-                new PlayerHelpers.BackLocation(
-                        requester.getX(),
-                        requester.getY(),
-                        requester.getZ(),
-                        requester.getYHeadRot(),
-                        requester.getXRot(),
-                        requester.serverLevel().dimension().location().toString()
-                )
+                target.getXRot()
         );
     }
 
-    private static void teleportToTarget(ServerPlayer requester, WarmupPayload payload, boolean trackBack) {
+    private static void teleportToTarget(ServerPlayer requester, WarmupPayload payload) {
         PlayerHelpers.teleportPlayer(
                 requester,
                 payload.targetLevel(),
@@ -194,7 +186,7 @@ public class TPAcceptCommand {
                 payload.targetPosition().z,
                 payload.targetYaw(),
                 payload.targetPitch(),
-                trackBack
+                false
         );
 
         requester.sendSystemMessage(CommandHelpers.teleportCompleteMessage(

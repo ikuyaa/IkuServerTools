@@ -145,10 +145,10 @@ public class BackCommand {
     private static ServerLevel resolveLevel(MinecraftServer server, String dimensionId) {
         if (server == null) return null;
 
-        ResourceKey<Level> dimKey = ResourceKey.create(
-                Registries.DIMENSION,
-                ResourceLocation.parse(dimensionId)
-        );
+        ResourceLocation loc = CommandHelpers.parseDimensionString(dimensionId);
+        if (loc == null) return null;
+
+        ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, loc);
         return server.getLevel(dimKey);
     }
 

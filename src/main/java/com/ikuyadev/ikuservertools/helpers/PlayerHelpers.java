@@ -1,12 +1,13 @@
 package com.ikuyadev.ikuservertools.helpers;
 
+import java.util.Optional;
+
 import com.ikuyadev.ikuservertools.data.HomeData;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.Optional;
 
 public class PlayerHelpers {
     public static final String BACK_TAG = "ikuservertools_back";
@@ -23,7 +24,8 @@ public class PlayerHelpers {
 
     public static boolean didPlayerMove(ServerPlayer player, Vec3 pos) {
         double moved = player.position().distanceTo(pos);
-        return moved > 0.15;
+        double threshold = com.ikuyadev.ikuservertools.Config.MOVE_THRESHOLD.get();
+        return moved > threshold;
     }
 
     public static void teleportPlayer(
@@ -113,13 +115,22 @@ public class PlayerHelpers {
             return Optional.empty();
         }
 
+        // Validate coordinates and dimension string before returning
+        double y = backTag.getDouble("y");
+        if (Double.isNaN(y) || Double.isInfinite(y) || y < -4096 || y > 4096) {
+            return Optional.empty();
+        }
+
+        String dim = backTag.getString("dimension");
+        if (dim == null || dim.isBlank()) return Optional.empty();
+
         return Optional.of(new BackLocation(
                 backTag.getDouble("x"),
-                backTag.getDouble("y"),
+                y,
                 backTag.getDouble("z"),
                 backTag.getFloat("yaw"),
                 backTag.getFloat("pitch"),
-                backTag.getString("dimension")
+                dim
         ));
     }
 }

@@ -47,6 +47,10 @@ public class PlayerCombatData {
         CooldownData.get().clearExpiredCooldowns();
     }
 
+    public static void clearPlayerCombat(ServerPlayer player) {
+        CooldownData.get().clearCooldown(player.getUUID(), CooldownSource.COMBAT);
+    }
+
     public static Component formatCombatMessage(String commandName, long timeRemainingMS) {
 
         return Component.literal("You cannot use ")
@@ -62,15 +66,21 @@ public class PlayerCombatData {
     }
 
     public static boolean isPlayerInCombat(ServerPlayer player) {
-        if (PermissionsManager.shouldForceCombatCooldowns(player)) {
-            return getMsRemaining(player) > 0;
+        // Ops bypass combat cooldown check entirely
+        if(player.hasPermissions(2)) return false;
+
+        // Force-cooldown players respect cooldowns; others bypass if configured
+        if (!PermissionsManager.shouldForceCombatCooldowns(player)
+                && PermissionsManager.canBypassCombatBlock(player)) {
+            return false;
         }
 
-        if(player.hasPermissions(2)) return false; // Bypass combat for ops
         return getMsRemaining(player) > 0;
     }
 
     public static boolean shouldCombatBlock(ServerPlayer player) {
-        return isPlayerInCombat(player) && !PermissionsManager.canBypassCombatBlock(player);
+        // Shortcut: just check once instead of calling isPlayerInCombat + another lookup
+        if (PermissionsManager.canBypassCombatBlock(player)) return false;
+        return getMsRemaining(player) > 0;
     }
 }
