@@ -53,6 +53,7 @@ Currently only for `NeoForge 1.21.1`. I may port to more versions in the future.
 - `ikust.gm` - `Allows the user to use /gm on self (Default: OP)`
 - `ikust.gm.others` - `Allows the user to use /gm {mode} {player} (Default: OP)`
 - `ikust.bypass.combatblock` - `Bypasses combat block for commands (Default: OP)`
+- `ikust.forcecooldowns`
 - `ikust.warp` - `Allows the use of /warp and /listwarps (Default: Everyone)` 
 - `warp.create` - `Allows the use of /setwarp (Default: OP)`
 - `warp.count.{number}` - `Set the amount of warps a player can set. 1-100`
