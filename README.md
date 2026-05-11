@@ -1,5 +1,5 @@
 # IkuServerTools
-This is my first Minecraft mod :D
+
 **This project is a WIP, but what is documented in the readme should work fine**
 Currently only for `NeoForge 1.21.1`. I may port to more versions in the future.
 
